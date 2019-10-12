@@ -1,4 +1,5 @@
 import os
+import permutation as pm
 
 hx = [1, 0, -1, 0, 1, -1, -1, 1]
 hy = [0, 1, 0, -1, 1, 1, -1, -1]
@@ -14,13 +15,7 @@ def readData(fileName):
     res.append(list(inpfile.readline().replace('\n', '').split(',')))
     res.append(list(inpfile.readline().replace('\n', '').split(',')))
 
-    numVer = 0
-    if len(res[1]) == 5:
-        numVer = int(res[1][4])
-
     numPoly = int(inpfile.readline())
-
-    res.append(list([numPoly, numVer]))
 
     poly = list()
     for i in range(numPoly):
@@ -32,20 +27,11 @@ def readData(fileName):
 
     res.append(poly)
 
-    ver = list()
-    if numVer != 0:
-        for i in range(numVer):
-            inp = list(inpfile.readline().replace('\n', '').split(','))
-            for j in range(len(inp)):
-                inp[i] = int(inp[i])
-            ver.append(inp)
-    res.append(ver)
-
     inpfile.close()
 
     return res
 
-def init(m, n, start, goal, numPoly, poly):
+def init(m, n, numPoly, poly):
     mat = list()
     for i in range(m + 1):
         col = list()
@@ -55,10 +41,6 @@ def init(m, n, start, goal, numPoly, poly):
 
     for i in range(m + 1):
         for j in range(n + 1):
-            if i == start[0] and j == start[1]:
-                mat[i][j] = 'S'
-            if i == goal[0] and j == goal[1]:
-                mat[i][j] = 'G'
             if i == 0 or j == 0 or i == m or j == n:
                 mat[i][j] = 1
 
@@ -158,11 +140,11 @@ def findPath(mat, m, n, start, goal):
         if x == goal[0] and y == goal[1]:
             break
 
-        cM = list()     # canMove
+        cM = list()     #canMove
         for i in range(4):
             u = x + hx[i]
             v = y + hy[i]
-            if (mat[u][v] == 0 or mat[u][v] == 'G') and closed[u][v] == 0:
+            if mat[u][v] == 0 and closed[u][v] == 0:
                 cM.append(1)
             else:
                 cM.append(0)
@@ -175,7 +157,7 @@ def findPath(mat, m, n, start, goal):
         for i in range(4, 8):
             u = x + hx[i]
             v = y + hy[i]
-            if (mat[u][v] != 0 and mat[u][v] != 'G') or closed[u][v] == 1:
+            if mat[u][v] != 0 or closed[u][v] == 1:
                 cM[i] = 0
 
         for i in range(8):
@@ -203,8 +185,7 @@ def findPath(mat, m, n, start, goal):
 
     res.reverse()
 
-    return res
-
+    return f[goal[0]][goal[1]], res
 
 def process():
     fileName = input("Nhap ten file: ")
@@ -213,24 +194,84 @@ def process():
 
     n = int(inp[0][0])  # column
     m = int(inp[0][1])  # row
-    start = list([int(inp[1][1]), int(inp[1][0])])
-    goal = list([int(inp[1][3]), int(inp[1][2])])
-    numPoly = inp[2][0]
-    numVer = inp[2][1]
-    poly = inp[3]
-    ver = inp[4]
 
-    matrix = init(m, n, start, goal, numPoly, poly)
+    ver = inp[1]
+    numVer = len(ver) // 2
+    for i in range(numVer * 2):
+        ver[i] = int(ver[i])
 
-    path = findPath(matrix, m, n, start, goal)
 
+    numPoly = len(inp[2])
+    poly = inp[2]
+
+    matrix = init(m, n, numPoly, poly)
+
+    f = list()
+    for i in range(numVer):
+        col = list()
+        for j in range(numVer):
+            col.append(0)
+        f.append(col)
+
+    for i in range(numVer):
+        for j in range(i + 1, numVer):
+            start = [ver[i * 2 + 1], ver[i * 2]]
+            goal = [ver[j * 2 + 1], ver[j * 2]]
+            val, move = findPath(matrix, m, n, start, goal)
+            f[i][j] = f[j][i] = val
+
+    hv = list(range(2, numVer))
+    res = 100000
+
+    while 1:
+        p = [0] + hv + [1]
+        tmp = 0
+        for i in range(len(p) - 1):
+            val = f[p[i]][p[i + 1]]
+            if val < 0:
+                res = -1
+                ttMove = []
+                break
+            else:
+                tmp += val
+
+        if res == -1:
+            break
+        if res > tmp:
+            res = tmp
+            ttMove = p
+
+        if not pm.next_permutation(hv):
+            break
+    if res > 0:
+        if res % 2 == 0:
+            res //= 2
+        else:
+            res /= 2
+
+    path = []
+    for i in range(len(ttMove) - 1):
+        start = [ver[ttMove[i] * 2 + 1], ver[ttMove[i] * 2]]
+        goal = [ver[ttMove[i + 1] * 2 + 1], ver[ttMove[i + 1] * 2]]
+        val, move = findPath(matrix, m, n, start, goal)
+        if len(path):
+            del path[len(path) - 1]
+        path = path + move
+
+    matrix[ver[1]][ver[0]] = 'S'
+    matrix[ver[3]][ver[2]] = 'G'
+    for i in range(2, numVer):
+        matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
+
+    print(res)
     for i in range(m, -1, -1):
-        for j in range(n + 1):
-            print(matrix[i][j], end=" ")
+        for j in range(n):
+            print(matrix[i][j], end = " ")
         print()
-
     print(path)
 
+    return res, matrix, path
 
-# main
-process()
+#main
+
+value, matrix, path = process()
