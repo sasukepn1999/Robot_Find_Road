@@ -158,7 +158,7 @@ def findPath(mat, m, n, start, goal):
         if x == goal[0] and y == goal[1]:
             break
 
-        cM = list()     #canMove
+        cM = list()     # canMove
         for i in range(4):
             u = x + hx[i]
             v = y + hy[i]
@@ -175,7 +175,7 @@ def findPath(mat, m, n, start, goal):
         for i in range(4, 8):
             u = x + hx[i]
             v = y + hy[i]
-            if (mat[u][v] != 0 and mat[u][v] != 'G')  or closed[u][v] == 1:
+            if (mat[u][v] != 0 and mat[u][v] != 'G') or closed[u][v] == 1:
                 cM[i] = 0
 
         for i in range(8):
@@ -205,6 +205,7 @@ def findPath(mat, m, n, start, goal):
 
     return res
 
+
 def process():
     fileName = input("Nhap ten file: ")
 
@@ -230,5 +231,6 @@ def process():
 
     print(path)
 
-#main
+
+# main
 process()
