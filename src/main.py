@@ -16,12 +16,10 @@ def main():
         m = int(inp[0][1])  # row
         start = list([int(inp[1][1]), int(inp[1][0])])
         goal = list([int(inp[1][3]), int(inp[1][2])])
-        numPoly = inp[2][0]
-        # numVer = inp[2][1]
-        poly = inp[3]
-        # ver = inp[4]
+        numPoly = len(inp[2])
+        poly = inp[2]
 
-        matrix = doan.init(m, n, start, goal, numPoly, poly)
+        matrix = doan.init(m, n, numPoly, poly)
         # print(matrix)
         find_algo = sys.argv[2]
         if find_algo == '0':
