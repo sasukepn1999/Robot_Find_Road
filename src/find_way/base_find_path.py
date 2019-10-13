@@ -45,20 +45,10 @@ class Base_Find_Path(abc.ABC):
             (x2, y2) = self.next_cell(cell, d2)
             if ((self.is_valid_cell((x1, y1))) and
                 (self.is_valid_cell((x2, y2))) and
+                (self.map_mat[x1][y1] != 0) and
                     (self.map_mat[x1][y1] == self.map_mat[x2][y2])):
                 return True
         return False
-
-    def cell_next_to_poly(self, cell, polyID):
-        if not(self.is_valid_cell(cell)):
-            return -1
-        for i in range(8):
-            (x, y) = self.next_cell(cell, i)
-            if not(self.is_valid_cell((x, y))):
-                continue
-            if (self.map_mat[x][y] == polyID):
-                return i
-        return -1
 
     def euclidean_dist(self, cell1, cell2):
         return math.sqrt(sum([(a - b) ** 2 for a, b in zip(cell1, cell2)]))

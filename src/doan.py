@@ -5,9 +5,10 @@ hy = [0, 1, 0, -1, 1, 1, -1, -1]
 hv = [2, 2, 2, 2, 3, 3, 3, 3]
 # top, right, bot, left
 
+
 def readData(fileName):
     res = list()
-    if os.path.exists(fileName) == False:
+    if not(os.path.exists(fileName)):
         print("File khong ton tai! ")
         exit(0)
     inpfile = open(fileName, "r")
@@ -44,6 +45,7 @@ def readData(fileName):
     inpfile.close()
 
     return res
+
 
 def init(m, n, start, goal, numPoly, poly):
     mat = list()
@@ -118,6 +120,7 @@ def init(m, n, start, goal, numPoly, poly):
                     x1 += xx
                     y1 += yy
     return mat
+
 
 def findPath(mat, m, n, start, goal):
     f = list()
@@ -216,9 +219,9 @@ def process():
     start = list([int(inp[1][1]), int(inp[1][0])])
     goal = list([int(inp[1][3]), int(inp[1][2])])
     numPoly = inp[2][0]
-    numVer = inp[2][1]
+    # numVer = inp[2][1]
     poly = inp[3]
-    ver = inp[4]
+    # ver = inp[4]
 
     matrix = init(m, n, start, goal, numPoly, poly)
 
@@ -233,4 +236,5 @@ def process():
 
 
 # main
-process()
+if __name__ == '__main__':
+    process()
