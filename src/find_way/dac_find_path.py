@@ -1,5 +1,5 @@
-from find_way.base_find_path import Base_Find_Path
-# from base_find_path import Base_Find_Path
+# from find_way.base_find_path import Base_Find_Path
+from base_find_path import Base_Find_Path
 
 
 class Dac_Find_Path(Base_Find_Path):
@@ -87,26 +87,29 @@ class Dac_Find_Path(Base_Find_Path):
                 # print((x, y))
                 _next_cell = (x, y)
                 direct = i
-        # print(self.current_pos, _next_cell)
-        if (self.move_into_poly(self.current_pos, direct)):
-            polyID = self.map_mat[_next_cell[0]][_next_cell[1]]
-            # print('move_into_poly', polyID)
+        print(self.current_pos, _next_cell)
+        polyID = self.move_into_poly(self.current_pos, direct)
+        if (polyID != 0):
+            # polyID = self.map_mat[_next_cell[0]][_next_cell[1]]
+            print('move_into_poly', polyID)
             (next_clockwise, next_anticlockwise) = \
                 self.next_2_adjacent_cell(polyID)
-            # print(next_clockwise, next_anticlockwise)
+            print("clockwise & anticlock", next_clockwise, next_anticlockwise)
             d = {self.current_pos: 0}
             prev_cell = self.current_pos
             (x, y) = next_clockwise
             s = 0
             i = 0
-            while (not((x, y) in d)):
+            while (self.current_pos != (x, y) or
+                   not(self.is_adjacent_cell(self.current_pos, (x, y)))):
+                if (i > 4 * (self.rows + self.cols)) or (prev_cell == (x, y)):
+                    self.current_pos = next_anticlockwise
+                    # print("break, current_pos = ", self.current_pos, next_clockwise)
+                    return
                 c = self.cost[self.get_direct(prev_cell, (x, y))]
                 d[(x, y)] = d[prev_cell] + c
                 s = s + c
                 i = i + 1
-                if i > 100:
-                    self.current_pos = next_anticlockwise
-                    return
                 prev_cell = (x, y)
                 ((x, y), _) = self.next_2_adjacent_cell(polyID, (x, y))
                 # print(prev_cell, (x, y), _)
@@ -128,20 +131,21 @@ class Dac_Find_Path(Base_Find_Path):
         self.current_pos = self.start
         path = [self.start]
         i = 0
-        while (i < 100) and (self.current_pos != self.goal):
-            # print(self.current_pos)
+        while ((i < 4 * (self.rows + self.cols)) and
+               (self.current_pos != self.goal)):
+            print(self.current_pos)
             self.next_move()
             path.append(self.current_pos)
         return path
 
 
 if __name__ == '__main__':
-    # m_find_path = Dac_Find_Path([[0, 0, 1],
-    #                              [0, 1, 1],
-    #                              [0, 0, 0]],
-    #                             (0, 0),
-    #                             (2, 2))
-    # print(m_find_path.get_path())
+    m_find_path = Dac_Find_Path([[0, 0, 1],
+                                 [0, 1, 1],
+                                 [0, 0, 0]],
+                                (0, 0),
+                                (2, 2))
+    print(m_find_path.get_path())
 
     m_find_path = Dac_Find_Path([[0, 0, 0, 0, 0, 0],
                                  [0, 0, 1, 1, 1, 0],

@@ -27,17 +27,24 @@ class Base_Find_Path(abc.ABC):
                 return i
         return -1
 
+    def is_adjacent_cell(self, cell1, cell2):
+        for i in range(8):
+            if ((cell2[0] - cell1[0] == self.dx[i]) and
+                    (cell2[1] - cell1[1] == self.dy[i])):
+                return True
+        return False
+
     def is_valid_cell(self, cell):
         return ((0 <= cell[0] < self.rows) and (0 <= cell[1] < self.cols))
 
     def move_into_poly(self, cell, direction):
         (x, y) = self.next_cell(cell, direction)
         if not(self.is_valid_cell((x, y))):
-            return True
+            return -1
         if ((self.map_mat[x][y] != 0) and
                 (self.map_mat[x][y] != 'S') and
                 (self.map_mat[x][y] != 'G')):
-            return True
+            return self.map_mat[x][y]
         if direction % 2 != 0:
             d1 = (direction - 1 + 8) % 8
             (x1, y1) = self.next_cell(cell, d1)
@@ -47,8 +54,8 @@ class Base_Find_Path(abc.ABC):
                 (self.is_valid_cell((x2, y2))) and
                 (self.map_mat[x1][y1] != 0) and
                     (self.map_mat[x1][y1] == self.map_mat[x2][y2])):
-                return True
-        return False
+                return self.map_mat[x1][y1]
+        return 0
 
     def euclidean_dist(self, cell1, cell2):
         return math.sqrt(sum([(a - b) ** 2 for a, b in zip(cell1, cell2)]))
