@@ -31,6 +31,11 @@ def main():
                                                       tuple(goal))
             path = m_find_path.get_path()
 
+        matrix[ver[1]][ver[0]] = 'S'
+        matrix[ver[3]][ver[2]] = 'G'
+        for i in range(2, len(ver) // 2):
+            matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
+
         # print(path)
 
         # #test

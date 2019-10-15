@@ -250,11 +250,6 @@ def find_path(matrix, m, n, ver, poly):
             del path[len(path) - 1]
         path = path + move
 
-    matrix[ver[1]][ver[0]] = 'S'
-    matrix[ver[3]][ver[2]] = 'G'
-    for i in range(2, numVer):
-        matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
-
     p = [res]
     p.append(path)
 
@@ -275,7 +270,14 @@ def process():
 
     matrix = init(m, n, len(poly), poly)
 
-    return matrix, find_path(matrix, m, n, ver, poly)
+    path = find_path(matrix, m, n, ver, poly)
+
+    matrix[ver[1]][ver[0]] = 'S'
+    matrix[ver[3]][ver[2]] = 'G'
+    for i in range(2, len(ver) // 2):
+        matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
+
+    return matrix, path
 
 
 
