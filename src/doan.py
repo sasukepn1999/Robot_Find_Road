@@ -1,5 +1,6 @@
 import os
 import permutation as pm
+import GUI_V2 as gv2
 
 hx = [1, 0, -1, 0, 1, -1, -1, 1]
 hy = [0, 1, 0, -1, 1, 1, -1, -1]
@@ -190,24 +191,12 @@ def findPath(mat, m, n, start, goal):
 
     return f[goal[0]][goal[1]], res
 
-
-def process():
-    fileName = input("Nhap ten file: ")
-
-    inp = readData(fileName)
-
-    n = int(inp[0][0])  # column
-    m = int(inp[0][1])  # row
-
-    ver = inp[1]
+def find_path(matrix, m, n, ver, poly):
     numVer = len(ver) // 2
     for i in range(numVer * 2):
         ver[i] = int(ver[i])
 
-    numPoly = len(inp[2])
-    poly = inp[2]
-
-    matrix = init(m, n, numPoly, poly)
+    numPoly = len(poly)
 
     f = list()
     for i in range(numVer):
@@ -266,16 +255,32 @@ def process():
     for i in range(2, numVer):
         matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
 
-    print(res)
-    for i in range(m, -1, -1):
-        for j in range(n):
-            print(matrix[i][j], end=" ")
-        print()
-    print(path)
+    p = [res]
+    p.append(path)
 
-    return res, matrix, path
+    return p
+
+
+def process():
+    fileName = input("Nhap ten file: ")
+
+    inp = readData(fileName)
+
+    n = int(inp[0][0])  # column
+    m = int(inp[0][1])  # row
+
+    ver = inp[1]
+
+    poly = inp[2]
+
+    matrix = init(m, n, len(poly), poly)
+
+    return matrix, find_path(matrix, m, n, ver, poly)
+
 
 
 # main
 if __name__ == '__main__':
-    value, matrix, path = process()
+    matrix, path = process()
+    surface = gv2.init(matrix)
+    gv2.loop(surface, matrix, path)
