@@ -1,16 +1,16 @@
 import sys
-import turtle as tt
+#import turtle as tt
 from find_way import dac_find_path
 import doan
-import GUI
-
+#import GUI
+import GUI_V2 as gv2
 
 def main():
     if (len(sys.argv) == 3):
         input_filepath = sys.argv[1]
         inp = doan.readData(input_filepath)
 
-        screen = tt.Screen()
+        #screen = tt.Screen()
 
         n = int(inp[0][0])  # column
         m = int(inp[0][1])  # row
@@ -20,7 +20,7 @@ def main():
         poly = inp[2]
 
         matrix = doan.init(m, n, numPoly, poly)
-        # print(matrix)
+        #print(matrix)
         find_algo = sys.argv[2]
         if find_algo == '0':
             path = doan.findPath(matrix, m, n, start, goal)
@@ -30,17 +30,22 @@ def main():
                                                       tuple(goal))
             path = m_find_path.get_path()
 
-        print(path)
+        # print(path)
 
-        Long = tt.Turtle()
-        Long.hideturtle()
-        turtle = Long
+        # #test
+        # path1 = path[1]
 
-        GUI.grid(turtle, len(matrix), len(matrix[0]))
-        GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
-        GUI.findWay(turtle, path, GUI.LENGTH)
+        # Long = tt.Turtle()
+        # Long.hideturtle()
+        # turtle = Long
 
-        screen.exitonclick()
+        # GUI.grid(turtle, len(matrix), len(matrix[0]))
+        # GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
+        # GUI.findWay(turtle, path1, GUI.LENGTH)
+
+        # screen.exitonclick()
+        surface = gv2.init(matrix)
+        gv2.loop(surface, matrix, path)
     else:
         print("Usage:", sys.argv[0], 'input filepath', 'type algo')
 
