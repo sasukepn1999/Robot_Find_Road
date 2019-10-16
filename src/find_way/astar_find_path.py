@@ -7,10 +7,7 @@ class AStar_Find_Path(Base_Find_Path):
     def __init__(self, file_name):
         super().__init__(file_name)
 
-    def h(self, start):
-        #return 0
-        goal = self.goal
-
+    def h(self, start, goal):
         length = max(abs(start[0] - goal[0]), abs(start[1] - goal[1]))
         width = min(abs(start[0] - goal[0]), abs(start[1] - goal[1]))
 
@@ -31,6 +28,13 @@ class AStar_Find_Path(Base_Find_Path):
             for j in range(n):
                 col.append(-1)
             f.append(col)
+
+        t = []
+        for i in range(m):
+            col = []
+            for j in range(n):
+                col.append(-1)
+            t.append(col)
 
         closed = []
         for i in range(m):
@@ -55,7 +59,7 @@ class AStar_Find_Path(Base_Find_Path):
             x = g[0][0]
             y = g[0][1]
             for i in range(len(g)):
-                if f[g[i][0]][g[i][1]] != -1 and f[x][y] + self.h((x, y)) > f[g[i][0]][g[i][1]] + self.h((g[i][0], g[i][1])):
+                if t[x][y] > t[g[i][0]][g[i][1]]:
                     x = g[i][0]
                     y = g[i][1]
             closed[x][y] = 1
@@ -95,6 +99,7 @@ class AStar_Find_Path(Base_Find_Path):
                     if f[u][v] != -1 and f[u][v] <= f[x][y] + hv[i]:
                         continue
                     f[u][v] = f[x][y] + hv[i]
+                    t[u][v] = f[u][v] + self.h((u, v), goal)
                     trace[u][v] = (x, y)
                     if g.count((u, v)) == 0:
                         g.append((u, v))
