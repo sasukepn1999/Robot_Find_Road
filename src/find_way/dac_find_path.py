@@ -1,5 +1,5 @@
-# from find_way.base_find_path import Base_Find_Path
-from base_find_path import Base_Find_Path
+from find_way.base_find_path import Base_Find_Path
+# from base_find_path import Base_Find_Path
 
 
 class Dac_Find_Path(Base_Find_Path):
@@ -74,6 +74,41 @@ class Dac_Find_Path(Base_Find_Path):
         return (self.next_cell(cell, next_clockwise),
                 self.next_cell(cell, next_anticlockwise))
 
+    def move_around_poly(self, start_cell, polyID, move_clockwise=True):
+        (next_clockwise, next_anticlockwise) = \
+            self.next_2_adjacent_cell(polyID, start_cell)
+        # print("clockwise & anticlock", next_clockwise, next_anticlockwise)
+        d = {start_cell: 0}
+        prev_cell = start_cell
+        if move_clockwise:
+            (x, y) = next_clockwise
+        else:
+            (x, y) = next_anticlockwise
+        is_circle = True
+        s = 0
+        i = 0
+        while (start_cell != (x, y) and
+               # not(self.is_adjacent_cell(start_cell, (x, y))) and
+               not((x, y) in d.keys())):
+            # print("(x, y) = ", (x, y))
+            if (i > 4 * (self.rows + self.cols)) or (prev_cell == (x, y)):
+                # print("break, cur_pos = ", self.current_pos, next_clockwise)
+                is_circle = False
+                break
+            c = self.cost[self.get_direct(prev_cell, (x, y))]
+            d[(x, y)] = d[prev_cell] + c
+            s = s + c
+            i = i + 1
+            prev_cell = (x, y)
+            (next_clockwise, next_anticlockwise) = \
+                self.next_2_adjacent_cell(polyID, (x, y))
+            # print(prev_cell, (x, y), _)
+            if move_clockwise:
+                (x, y) = next_clockwise
+            else:
+                (x, y) = next_anticlockwise
+        return (is_circle, d)
+
     def next_move(self):
         _next_cell = self.current_pos
         direct = -1
@@ -87,42 +122,64 @@ class Dac_Find_Path(Base_Find_Path):
                 # print((x, y))
                 _next_cell = (x, y)
                 direct = i
-        print(self.current_pos, _next_cell)
+        # print(self.current_pos, _next_cell)
         polyID = self.move_into_poly(self.current_pos, direct)
         if (polyID != 0):
             # polyID = self.map_mat[_next_cell[0]][_next_cell[1]]
-            print('move_into_poly', polyID)
+            # print('move_into_poly', polyID)
             (next_clockwise, next_anticlockwise) = \
                 self.next_2_adjacent_cell(polyID)
-            print("clockwise & anticlock", next_clockwise, next_anticlockwise)
-            d = {self.current_pos: 0}
-            prev_cell = self.current_pos
-            (x, y) = next_clockwise
-            s = 0
-            i = 0
-            while (self.current_pos != (x, y) or
-                   not(self.is_adjacent_cell(self.current_pos, (x, y)))):
-                if (i > 4 * (self.rows + self.cols)) or (prev_cell == (x, y)):
-                    self.current_pos = next_anticlockwise
-                    # print("break, current_pos = ", self.current_pos, next_clockwise)
-                    return
-                c = self.cost[self.get_direct(prev_cell, (x, y))]
-                d[(x, y)] = d[prev_cell] + c
-                s = s + c
-                i = i + 1
-                prev_cell = (x, y)
-                ((x, y), _) = self.next_2_adjacent_cell(polyID, (x, y))
-                # print(prev_cell, (x, y), _)
-            b_dist = self.rows + self.cols
-            (x, y) = self.current_pos
-            for cell, dist in d.items():
+            # print("clockwise & anticlock", next_clockwise, next_anticlockwise)
+            # d = {self.current_pos: 0}
+            # prev_cell = self.current_pos
+            # (x, y) = next_clockwise
+            # s = 0
+            # i = 0
+            # while (self.current_pos != (x, y) or
+            #        not(self.is_adjacent_cell(self.current_pos, (x, y)))):
+            #     print("(x, y) = ", (x, y))
+            #     if (i > 4 * (self.rows + self.cols)) or (prev_cell == (x, y)):
+            #         self.current_pos = next_anticlockwise
+            #         print("break, cur_pos =", self.current_pos, next_clockwise)
+            #         return
+            #     c = self.cost[self.get_direct(prev_cell, (x, y))]
+            #     d[(x, y)] = d[prev_cell] + c
+            #     s = s + c
+            #     i = i + 1
+            #     prev_cell = (x, y)
+            #     ((x, y), _) = self.next_2_adjacent_cell(polyID, (x, y))
+            #     # print(prev_cell, (x, y), _)
+            (is_circle, d1) = self.move_around_poly(self.current_pos,
+                                                    polyID,
+                                                    True)
+            (is_circle, d2) = self.move_around_poly(self.current_pos,
+                                                    polyID,
+                                                    False)
+            # print(d1)
+            # print(d2)
+            b_dist = 2 * (self.rows + self.cols)
+            b_cell = self.current_pos
+            for cell, dist in d1.items():
                 if self.euclidean_dist(cell, self.goal) < b_dist:
                     b_dist = self.euclidean_dist(cell, self.goal)
-                    (x, y) = cell
+                    b_cell = cell
+            for cell, dist in d2.items():
+                if self.euclidean_dist(cell, self.goal) < b_dist:
+                    b_dist = self.euclidean_dist(cell, self.goal)
+                    b_cell = cell
+            # print("b_cell=", b_cell)
             # print((x, y), d[(x, y)], s - d[(x, y)])
-            if (d[(x, y)] < s - d[(x, y)]):
+            if (b_cell not in d2.keys()):
+                # print(b_cell, "not in d2")
+                self.current_pos = next_clockwise
+            elif (b_cell not in d1.keys()):
+                # print(b_cell, "not in d1")
+                self.current_pos = next_anticlockwise
+            elif (d1[b_cell] < d2[b_cell]):
+                # print(b_cell, "d1 < d2")
                 self.current_pos = next_clockwise
             else:
+                # print(b_cell, "else")
                 self.current_pos = next_anticlockwise
         else:
             self.current_pos = _next_cell
@@ -133,10 +190,10 @@ class Dac_Find_Path(Base_Find_Path):
         i = 0
         while ((i < 4 * (self.rows + self.cols)) and
                (self.current_pos != self.goal)):
-            print(self.current_pos)
+            # print(self.current_pos)
             self.next_move()
             path.append(self.current_pos)
-        return path
+        return (len(path), path)
 
 
 if __name__ == '__main__':
@@ -203,3 +260,4 @@ if __name__ == '__main__':
          [1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
         (2, 2), (16, 19))
+    print(m_find_path.get_path())

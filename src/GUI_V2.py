@@ -1,5 +1,7 @@
-import pygame, sys
+import pygame
+import sys
 import constrants as cs
+
 
 def getColor(element):
     if element == 0:
@@ -8,6 +10,7 @@ def getColor(element):
         return cs.GREEN
     else:
         return cs.COLOR[element]
+
 
 def draw_map(surface, map):
     row = len(map)
@@ -18,29 +21,32 @@ def draw_map(surface, map):
             rect = pygame.Rect(j*cs.LENGTH, (row - i - 1)*cs.LENGTH, cs.LENGTH, cs.LENGTH)
             pygame.draw.rect(surface, getColor(map[i][j]), rect)
 
+
 def draw_grid(surface, map):
     row = len(map)
     col = len(map[0])
 
-    for i in range(col+1):
-        new_height = i*cs.LENGTH
-        pygame.draw.line(surface, cs.BLACK, (new_height, 0), (new_height, cs.LENGTH*row), 1)
+    for i in range(col + 1):
+        new_height = i * cs.LENGTH
+        pygame.draw.line(surface, cs.BLACK, (new_height, 0), (new_height, cs.LENGTH * row), 1)
 
-    for i in range(row+1):
-        new_width = i*cs.LENGTH
-        pygame.draw.line(surface, cs.BLACK, (0, new_width), (cs.LENGTH*col, new_width), 1)
+    for i in range(row + 1):
+        new_width = i * cs.LENGTH
+        pygame.draw.line(surface, cs.BLACK, (0, new_width), (cs.LENGTH * col, new_width), 1)
+
 
 def draw_path(surface, path, map):
     row = len(map)
     col = len(map[0])
 
     for pos in path[1]:
-        rect = pygame.Rect(pos[1]*cs.LENGTH, (row - pos[0] - 1)*cs.LENGTH, cs.LENGTH, cs.LENGTH)
+        rect = pygame.Rect(pos[1] * cs.LENGTH, (row - pos[0] - 1) * cs.LENGTH, cs.LENGTH, cs.LENGTH)
         pygame.draw.rect(surface, cs.GREEN, rect)
 
+
 def init(map):
-    cs.SCREEN_WIDTH += cs.LENGTH*len(map[0])
-    cs.SCREEN_HEIGHT += cs.LENGTH*len(map)
+    cs.SCREEN_WIDTH += cs.LENGTH * len(map[0])
+    cs.SCREEN_HEIGHT += cs.LENGTH * len(map)
 
     pygame.init()
     surface = pygame.display.set_mode((cs.SCREEN_WIDTH, cs.SCREEN_HEIGHT))
@@ -48,7 +54,8 @@ def init(map):
     surface.fill(cs.WHITE)
     return surface
 
-def loop(surface, map, path):    
+
+def loop(surface, map, path):
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

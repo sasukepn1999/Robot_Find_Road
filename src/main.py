@@ -1,16 +1,17 @@
 import sys
-#import turtle as tt
+# import turtle as tt
 from find_way import dac_find_path
 import doan
-#import GUI
+# import GUI
 import GUI_V2 as gv2
+
 
 def main():
     if (len(sys.argv) == 3):
         input_filepath = sys.argv[1]
         inp = doan.readData(input_filepath)
 
-        #screen = tt.Screen()
+        # screen = tt.Screen()
 
         n = int(inp[0][0])  # column
         m = int(inp[0][1])  # row
@@ -20,7 +21,7 @@ def main():
         poly = inp[2]
 
         matrix = doan.init(m, n, numPoly, poly)
-        #print(matrix)
+        # print(matrix)
         find_algo = sys.argv[2]
         if find_algo == '0':
             path = doan.findPath(matrix, m, n, start, goal)
