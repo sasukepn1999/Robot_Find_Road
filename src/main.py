@@ -1,47 +1,36 @@
 import sys
-# import turtle as tt
+#import turtle as tt
 from find_way import dac_find_path
-import doan
-# import GUI
+from find_way import dijkstra_find_path
+from find_way import astar_find_path
+import os
+#import GUI
 import GUI_V2 as gv2
 
-
 def main():
-    if (len(sys.argv) == 3):
+    if (len(sys.argv) == 3 and (sys.argv[2] == '0' or sys.argv[2] == '1' or sys.argv[2] == '2')):
         input_filepath = sys.argv[1]
-        inp = doan.readData(input_filepath)
 
-        # screen = tt.Screen()
+        if not (os.path.exists(input_filepath)):
+            print("File does not exist! ")
+            return
 
-        n = int(inp[0][0])  # column
-        m = int(inp[0][1])  # row
-        start = list([int(inp[1][1]), int(inp[1][0])])
-        goal = list([int(inp[1][3]), int(inp[1][2])])
-        ver = inp[1]
-        numPoly = len(inp[2])
-        poly = inp[2]
-
-        matrix = doan.init(m, n, numPoly, poly)
-        # print(matrix)
         find_algo = sys.argv[2]
         if find_algo == '0':
-            path = doan.find_path(matrix, m, n, ver, poly)
-        else:
-            m_find_path = dac_find_path.Dac_Find_Path(matrix,
-                                                      tuple(start),
-                                                      tuple(goal))
+            m_find_path = dijkstra_find_path.Dijkstra_Find_Path(input_filepath)
             path = m_find_path.get_path()
-
-        numVer = len(ver) // 2
-        for i in range(numVer * 2):
-            ver[i] = int(ver[i])
-        # print(ver)
-        matrix[ver[1]][ver[0]] = 'S'
-        matrix[ver[3]][ver[2]] = 'G'
-        for i in range(2, len(ver) // 2):
-            matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
-
-        # print(path)
+            m_find_path.update_map_mat()
+            matrix = m_find_path.map_mat
+        if find_algo == '1':
+            m_find_path = astar_find_path.AStar_Find_Path(input_filepath)
+            path = m_find_path.get_path()
+            m_find_path.update_map_mat()
+            matrix = m_find_path.map_mat
+        if find_algo == '2':
+            m_find_path = dac_find_path.Dac_Find_Path(input_filepath)
+            path = m_find_path.get_path()
+            m_find_path.update_map_mat()
+            matrix = m_find_path.map_mat
 
         # #test
         # path1 = path[1]
@@ -58,7 +47,7 @@ def main():
         surface = gv2.init(matrix)
         gv2.loop(surface, matrix, path)
     else:
-        print("Usage:", sys.argv[0], 'input filepath', 'type algo')
+        print("Usage:", sys.argv[0], 'input_filepath', 'type_algo_(0-2)')
 
 
 if __name__ == '__main__':
