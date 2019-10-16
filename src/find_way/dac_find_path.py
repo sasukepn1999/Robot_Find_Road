@@ -1,13 +1,14 @@
 from find_way.base_find_path import Base_Find_Path
+import os
 # from base_find_path import Base_Find_Path
 
 
 class Dac_Find_Path(Base_Find_Path):
     """docstring for Dac_Find_Path"""
 
-    def __init__(self, map_mat, start, goal):
-        super().__init__(map_mat, start, goal)
-        self.current_pos = start
+    def __init__(self, file_name):
+        super().__init__(file_name)
+        self.current_pos = self.start
 
     def cell_next_to_poly(self, cell, polyID):
         if not(self.is_valid_cell(cell)):
@@ -197,6 +198,16 @@ class Dac_Find_Path(Base_Find_Path):
 
 
 if __name__ == '__main__':
+    file_name = input("File name: ")
+    if not (os.path.exists(file_name)):
+        print("File does not exist! ")
+        exit(0)
+    m_find_path = Dac_Find_Path(file_name)
+    path = m_find_path.get_path()
+    print(path)
+    exit(0)
+
+
     m_find_path = Dac_Find_Path([[0, 0, 1],
                                  [0, 1, 1],
                                  [0, 0, 0]],

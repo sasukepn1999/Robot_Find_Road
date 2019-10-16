@@ -9,12 +9,110 @@ class Base_Find_Path(abc.ABC):
     dy = [0, 1, 1, 1, 0, -1, -1, -1, 0]
     cost = [1, 1.5, 1, 1.5, 1, 1.5, 1, 1.5, 10]
 
-    def __init__(self, map_mat, start, goal):
-        self.map_mat = map_mat
-        self.rows = len(map_mat)
-        self.cols = len(map_mat[0])
-        self.start = start
-        self.goal = goal
+    def __init__(self, file_name):
+
+        inpfile = open(file_name, "r")
+        inp = list(inpfile.readline().replace('\n', '').split(','))
+        n = int(inp[0])  # column
+        m = int(inp[1])  # row
+
+        inp = list(inpfile.readline().replace('\n', '').split(','))
+        for i in range(len(inp)):
+            inp[i] = int(inp[i])
+        self.ver = inp
+
+        self.start = (inp[1], inp[0])
+        self.goal = (inp[3], inp[2])
+
+        numPoly = int(inpfile.readline())
+
+        poly = list()
+        for i in range(numPoly):
+            inp = list(inpfile.readline().replace('\n', '').split(','))
+            for j in range(len(inp)):
+                inp[j] = int(inp[j])
+            inp += [inp[0], inp[1]]
+            poly.append(inp)
+
+        inpfile.close()
+
+        mat = list()
+        for i in range(m + 1):
+            col = list()
+            for i in range(n + 1):
+                col.append(0)
+            mat.append(col)
+
+        for i in range(m + 1):
+            for j in range(n + 1):
+                if i == 0 or j == 0 or i == m or j == n:
+                    mat[i][j] = 1
+
+        for i in range(numPoly):
+            for j in range(len(poly[i]) // 2 - 1):
+                x1 = poly[i][j * 2 + 1]
+                y1 = poly[i][j * 2]
+                x2 = poly[i][j * 2 + 3]
+                y2 = poly[i][j * 2 + 2]
+
+                if x1 < x2:
+                    xx = 1
+                else:
+                    xx = -1
+
+                if y1 < y2:
+                    yy = 1
+                else:
+                    yy = -1
+
+                dx = abs(x1 - x2) + 1
+                dy = abs(y1 - y2) + 1
+
+                if dx >= dy:
+                    d = 1
+                    cx = dx // dy - 1
+                    crx = dx % dy
+                else:
+                    d = 2
+                    cy = dy // dx - 1
+                    cry = dy % dx
+
+                while 1:
+                    mat[x1][y1] = i + 2
+                    if d == 1:
+                        tx = cx
+                        if crx > 0:
+                            tx += 1
+                            crx -= 1
+                        while tx > 0:
+                            x1 += xx
+                            tx -= 1
+                            mat[x1][y1] = i + 2
+                    else:
+                        ty = cy
+                        if cry > 0:
+                            ty += 1
+                            cry -= 1
+                        while ty > 0:
+                            y1 += yy
+                            ty -= 1
+                            mat[x1][y1] = i + 2
+
+                    if x1 == x2 and y1 == y2:
+                        break
+                    else:
+                        x1 += xx
+                        y1 += yy
+
+        self.map_mat = mat
+        self.rows = len(mat)
+        self.cols = len(mat[0])
+
+    def update_map_mat(self):
+        self.map_mat[self.ver[1]][self.ver[0]] = 'S'
+        self.map_mat[self.ver[3]][self.ver[2]] = 'G'
+        for i in range(2, len(self.ver) // 2):
+            self.map_mat[self.ver[i * 2 + 1]][self.ver[i * 2]] = 'P'
 
     def next_cell(self, cell, direction):
         assert (-1 <= direction < 8), "0-7 to move or -1 to stand (not move)"
