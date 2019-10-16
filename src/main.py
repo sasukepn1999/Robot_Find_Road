@@ -17,6 +17,7 @@ def main():
         m = int(inp[0][1])  # row
         start = list([int(inp[1][1]), int(inp[1][0])])
         goal = list([int(inp[1][3]), int(inp[1][2])])
+        ver = inp[1]
         numPoly = len(inp[2])
         poly = inp[2]
 
@@ -24,12 +25,21 @@ def main():
         # print(matrix)
         find_algo = sys.argv[2]
         if find_algo == '0':
-            path = doan.findPath(matrix, m, n, start, goal)
+            path = doan.find_path(matrix, m, n, ver, poly)
         else:
             m_find_path = dac_find_path.Dac_Find_Path(matrix,
                                                       tuple(start),
                                                       tuple(goal))
             path = m_find_path.get_path()
+
+        numVer = len(ver) // 2
+        for i in range(numVer * 2):
+            ver[i] = int(ver[i])
+        # print(ver)
+        matrix[ver[1]][ver[0]] = 'S'
+        matrix[ver[3]][ver[2]] = 'G'
+        for i in range(2, len(ver) // 2):
+            matrix[ver[i * 2 + 1]][ver[i * 2]] = 'P'
 
         # print(path)
 
