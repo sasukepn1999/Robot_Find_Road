@@ -183,6 +183,8 @@ class AStar_Find_Path(Base_Find_Path):
         path = []
         for i in range(len(ttMove) - 1):
             move = f[ttMove[i]][ttMove[i + 1]][1]
+            if (ttMove[i] > ttMove[i + 1]):
+                move.reverse()
             if len(path):
                 del path[len(path) - 1]
             path = path + move
@@ -197,6 +199,7 @@ if __name__ == '__main__':
         exit(0)
     m_find_path = AStar_Find_Path(file_name)
     path = m_find_path.get_path()
+    print(path[1])
     m_find_path.update_map_mat()
     matrix = m_find_path.map_mat
     surface = gv2.init(matrix)

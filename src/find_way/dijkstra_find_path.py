@@ -165,6 +165,8 @@ class Dijkstra_Find_Path(Base_Find_Path):
         path = []
         for i in range(len(ttMove) - 1):
             move = f[ttMove[i]][ttMove[i + 1]][1]
+            if (ttMove[i] > ttMove[i + 1]):
+                move.reverse()
             if len(path):
                 del path[len(path) - 1]
             path = path + move
