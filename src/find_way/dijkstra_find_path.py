@@ -1,5 +1,4 @@
 import os
-import permutation as pm
 from find_way.base_find_path import Base_Find_Path
 import GUI_V2 as gv2
 
@@ -122,31 +121,41 @@ class Dijkstra_Find_Path(Base_Find_Path):
                 start = [ver[i * 2 + 1], ver[i * 2]]
                 goal = [ver[j * 2 + 1], ver[j * 2]]
                 val, move = self.find_path(start, goal)
-                f[i][j] = f[j][i] = val
+                f[i][j] = f[j][i] = (val, move)
 
-        hv = list(range(2, numVer))
-        res = 100000
+        bm = []
+        for i in range(numVer):
+            mask = []
+            for j in range(1 << numVer):
+                mask.append([100000, -1])
+            bm.append(mask)
 
-        while 1:
-            p = [0] + hv + [1]
-            tmp = 0
-            for i in range(len(p) - 1):
-                val = f[p[i]][p[i + 1]]
-                if val < 0:
-                    res = -1
-                    ttMove = []
-                    break
-                else:
-                    tmp += val
+        bm[0][1][0] = 0
+        for z in range(numVer):
+            for i in range(numVer):
+                for k in range(1 << numVer):
+                    for j in range(numVer):
+                        if (k & (1 << j)) == 0 and i != j:
+                            v = k | (1 << j)
+                            if bm[j][v][0] > bm[i][k][0] + f[i][j][0] and f[i][j][0] != -1:
+                                bm[j][v][0] = bm[i][k][0] + f[i][j][0]
+                                bm[j][v][1] = i
 
-            if res == -1:
-                break
-            if res > tmp:
-                res = tmp
-                ttMove = p
+        res = bm[1][(1 << numVer) - 1][0]
+        ttMove = []
+        v = 1
+        tt = (1 << numVer) - 1
 
-            if not pm.next_permutation(hv):
-                break
+        if res < 100000:
+            while v != -1:
+                ttMove.append(v)
+                tmp = v
+                v = bm[v][tt][1]
+                tt = tt ^ (1 << tmp)
+            ttMove.reverse()
+        else:
+            res = -1
+
         if res > 0:
             if res % 2 == 0:
                 res //= 2
@@ -155,9 +164,7 @@ class Dijkstra_Find_Path(Base_Find_Path):
 
         path = []
         for i in range(len(ttMove) - 1):
-            start = [ver[ttMove[i] * 2 + 1], ver[ttMove[i] * 2]]
-            goal = [ver[ttMove[i + 1] * 2 + 1], ver[ttMove[i + 1] * 2]]
-            val, move = self.find_path(start, goal)
+            move = f[ttMove[i]][ttMove[i + 1]][1]
             if len(path):
                 del path[len(path) - 1]
             path = path + move
