@@ -8,7 +8,7 @@ import GUI
 import GUI_V2 as gv2
 
 def main():
-    if (len(sys.argv) == 4 and (sys.argv[2] == '0' or sys.argv[2] == '1' or sys.argv[2] == '2')):
+    if (len(sys.argv) == 4 and (sys.argv[2] == '0' or sys.argv[2] == '1' or sys.argv[2] == '2') and (sys.argv[3] == 'turtle' or sys.argv[3] == 'pygame')):
         input_filepath = sys.argv[1]
 
         if not (os.path.exists(input_filepath)):
