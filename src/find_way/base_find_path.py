@@ -24,10 +24,10 @@ class Base_Find_Path(abc.ABC):
         self.start = (inp[1], inp[0])
         self.goal = (inp[3], inp[2])
 
-        numPoly = int(inpfile.readline())
+        self.numPoly = int(inpfile.readline())
 
         poly = list()
-        for i in range(numPoly):
+        for i in range(self.numPoly):
             inp = list(inpfile.readline().replace('\n', '').split(','))
             for j in range(len(inp)):
                 inp[j] = int(inp[j])
@@ -48,7 +48,7 @@ class Base_Find_Path(abc.ABC):
                 if i == 0 or j == 0 or i == m or j == n:
                     mat[i][j] = 1
 
-        for i in range(numPoly):
+        for i in range(self.numPoly):
             for j in range(len(poly[i]) // 2 - 1):
                 x1 = poly[i][j * 2 + 1]
                 y1 = poly[i][j * 2]
@@ -108,6 +108,18 @@ class Base_Find_Path(abc.ABC):
         self.rows = len(mat)
         self.cols = len(mat[0])
 
+    def poly_move(self, direction):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                x = i + self.dx[direction]
+                y = j + self.dy[direction]
+                if not(self.is_valid_cell((x, y))):
+                    continue
+                if ((self.map_mat[i][j] in ['S', 'G', 'P', 1]) or
+                        (self.map_mat[x][y] in ['S', 'G', 'P', 1])):
+                    continue
+                self.map_mat[x][y] = self.map_mat[i][j]
+
     def update_map_mat(self):
         self.map_mat[self.ver[1]][self.ver[0]] = 'S'
         self.map_mat[self.ver[3]][self.ver[2]] = 'G'
@@ -135,13 +147,11 @@ class Base_Find_Path(abc.ABC):
     def is_valid_cell(self, cell):
         return ((0 <= cell[0] < self.rows) and (0 <= cell[1] < self.cols))
 
-    def move_into_poly(self, cell, direction):
+    def move_cross_edge(self, cell, direction):
         (x, y) = self.next_cell(cell, direction)
         if not(self.is_valid_cell((x, y))):
             return -1
-        if ((self.map_mat[x][y] != 0) and
-                (self.map_mat[x][y] != 'S') and
-                (self.map_mat[x][y] != 'G')):
+        if self.map_mat[x][y] not in ['S', 'G', 'P', 0]:
             return self.map_mat[x][y]
         if direction % 2 != 0:
             d1 = (direction - 1 + 8) % 8
@@ -153,6 +163,31 @@ class Base_Find_Path(abc.ABC):
                 (self.map_mat[x1][y1] != 0) and
                     (self.map_mat[x1][y1] == self.map_mat[x2][y2])):
                 return self.map_mat[x1][y1]
+        return 0
+
+    def try_move_out_poly(self, cell, polyID, visited):
+        visited[cell[0]][cell[1]] = True
+        if self.map_mat[cell[0]][cell[1]] == polyID:
+            return False
+        for i in range(8):
+            (x, y) = self.next_cell(cell, i)
+            if self.map_mat[x][y] not in [polyID, 'S', 'G', 'P', 0]:
+                return True
+            if self.move_cross_edge(cell, i) == 0 and not(visited[x][y]):
+                can_move = self.try_move_out_poly((x, y), polyID, visited)
+                if can_move:
+                    return can_move
+        return False
+
+    def move_into_poly(self, cell, direction):
+        (x, y) = self.next_cell(cell, direction)
+        if not(self.is_valid_cell((x, y))):
+            return -1
+        for i in range(2, self.numPoly + 2):
+            visited = [[False] * self.cols] * self.rows
+            if self.try_move_out_poly((x, y), i, visited) is False:
+                return i
+        return self.move_cross_edge(cell, direction)
         return 0
 
     def euclidean_dist(self, cell1, cell2):

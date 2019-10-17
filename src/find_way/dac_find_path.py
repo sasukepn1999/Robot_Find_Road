@@ -114,6 +114,11 @@ class Dac_Find_Path(Base_Find_Path):
         _next_cell = self.current_pos
         direct = -1
         for i in range(8):
+            (x_cur, y_cur) = self.current_pos
+            if self.map_mat[x_cur][y_cur] not in ['S', 'G', 0]:
+                if self.move_into_poly(self.current_pos, i) == 0:
+                    self.current_pos = self.next_cell(self.current_pos, i)
+                    return
             (x, y) = self.next_cell(self.current_pos, i)
             if not(self.is_valid_cell((x, y))):
                 continue
@@ -125,6 +130,8 @@ class Dac_Find_Path(Base_Find_Path):
                 direct = i
         # print(self.current_pos, _next_cell)
         polyID = self.move_into_poly(self.current_pos, direct)
+        # if (polyID == 0):
+        #     polyID = self.move_cross_edge(self.current_pos, direct)
         if (polyID != 0):
             # polyID = self.map_mat[_next_cell[0]][_next_cell[1]]
             # print('move_into_poly', polyID)
@@ -194,6 +201,7 @@ class Dac_Find_Path(Base_Find_Path):
             # print(self.current_pos)
             self.next_move()
             path.append(self.current_pos)
+            i += 1
         return (len(path), path)
 
 
@@ -206,7 +214,6 @@ if __name__ == '__main__':
     path = m_find_path.get_path()
     print(path)
     exit(0)
-
 
     m_find_path = Dac_Find_Path([[0, 0, 1],
                                  [0, 1, 1],

@@ -7,8 +7,22 @@ import os
 import GUI
 import GUI_V2 as gv2
 
+
+def poly_moving(m_find_path, turtle):
+    direct = 2
+    while m_find_path.current_pos != m_find_path.goal:
+        m_find_path.poly_move(direct)
+        direct = (direct + 4) % 8
+        matrix = m_find_path.map_mat
+        print(matrix)
+        # GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
+        m_find_path.next_move()
+        (x, y) = m_find_path.current_pos
+        # GUI.fillDotOnGrid(turtle, x, y, GUI.LENGTH)
+
+
 def main():
-    if (len(sys.argv) == 4 and (sys.argv[2] == '0' or sys.argv[2] == '1' or sys.argv[2] == '2') and (sys.argv[3] == 'turtle' or sys.argv[3] == 'pygame')):
+    if (len(sys.argv) == 4 and (sys.argv[2] in ['0', '1', '2', '3']) and (sys.argv[3] in ['turtle', 'pygame'])):
         input_filepath = sys.argv[1]
 
         if not (os.path.exists(input_filepath)):
@@ -32,6 +46,12 @@ def main():
             m_find_path.update_map_mat()
             matrix = m_find_path.map_mat
 
+        if find_algo == "3":
+            m_find_path = dac_find_path.Dac_Find_Path(input_filepath)
+            m_find_path.update_map_mat()
+            path = (0, [])
+            matrix = m_find_path.map_mat
+
         if sys.argv[3] == "turtle":
             path1 = path[1]
             screen = tt.Screen()
@@ -43,8 +63,11 @@ def main():
             GUI.grid(turtle, len(matrix), len(matrix[0]))
             GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
             GUI.findWay(turtle, path1, GUI.LENGTH)
-            
+
             screen.exitonclick()
+
+        if find_algo == '3':
+            poly_moving(m_find_path, turtle)
         elif sys.argv[3] == "pygame":
             surface = gv2.init(matrix)
             gv2.loop(surface, matrix, path)
