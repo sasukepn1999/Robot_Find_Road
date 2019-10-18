@@ -116,11 +116,15 @@ class Dijkstra_Find_Path(Base_Find_Path):
                 col.append(0)
             f.append(col)
 
+        res = 0
+        path = []
         for i in range(numVer):
             for j in range(i + 1, numVer):
                 start = [ver[i * 2 + 1], ver[i * 2]]
                 goal = [ver[j * 2 + 1], ver[j * 2]]
                 val, move = self.find_path(start, goal)
+                if val == -1:
+                    return (res, path)
                 f[i][j] = f[j][i] = (val, move)
 
         bm = []
@@ -131,15 +135,15 @@ class Dijkstra_Find_Path(Base_Find_Path):
             bm.append(mask)
 
         bm[0][1][0] = 0
-        for z in range(numVer):
+        for k in range(2, 1 << numVer):
             for i in range(numVer):
-                for k in range(1 << numVer):
+                if k & (1 << i):
                     for j in range(numVer):
-                        if (k & (1 << j)) == 0 and i != j:
-                            v = k | (1 << j)
-                            if bm[j][v][0] > bm[i][k][0] + f[i][j][0] and f[i][j][0] != -1:
-                                bm[j][v][0] = bm[i][k][0] + f[i][j][0]
-                                bm[j][v][1] = i
+                        if k & (1 << j) and i != j:
+                            v = k ^ (1 << i)
+                            if bm[i][k][0] > bm[j][v][0] + f[j][i][0] and f[j][i][0] != -1:
+                                bm[i][k][0] = bm[j][v][0] + f[j][i][0]
+                                bm[i][k][1] = j
 
         res = bm[1][(1 << numVer) - 1][0]
         ttMove = []
@@ -162,7 +166,6 @@ class Dijkstra_Find_Path(Base_Find_Path):
             else:
                 res /= 2
 
-        path = []
         for i in range(len(ttMove) - 1):
             move = f[ttMove[i]][ttMove[i + 1]][1]
             if (ttMove[i] > ttMove[i + 1]):
