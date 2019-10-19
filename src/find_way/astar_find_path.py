@@ -204,6 +204,8 @@ class AStar_Find_Path(Base_Find_Path):
         tmp = self.map_mat
         self.map_mat = self.new_map
         self.new_map = tmp
+        self.new_map[self.ver[1]][self.ver[0]] = 'S'
+        self.new_map[self.ver[3]][self.ver[2]] = 'G'
 
         # if self.direction == 0:
         #    self.direction = 4

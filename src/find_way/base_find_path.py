@@ -155,6 +155,8 @@ class Base_Find_Path(abc.ABC):
             mat[self.ver[1]][self.ver[0]] = 'S'
             mat[self.ver[3]][self.ver[2]] = 'G'
         else:
+            self.new_map[self.ver[1]][self.ver[0]] = 0
+            self.new_map[self.ver[3]][self.ver[2]] = 0
             for i in range(self.rows):
                 for j in range(self.cols):
                     if mat[i][j] == self.new_map[i][j]:
