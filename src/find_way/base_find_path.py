@@ -144,17 +144,25 @@ class Base_Find_Path(abc.ABC):
         for i in range(2, len(self.ver) // 2):
             self.map_mat[self.ver[i * 2 + 1]][self.ver[i * 2]] = 'P'
 
-    def get_matrix(self):
+    def get_matrix(self, c):
         mat = []
         for i in range(self.rows):
             row = []
             for j in range(self.cols):
                 row.append(self.map_mat[i][j])
             mat.append(row)
-        mat[self.ver[1]][self.ver[0]] = 'S'
-        mat[self.ver[3]][self.ver[2]] = 'G'
-        for i in range(2, len(self.ver) // 2):
-            mat[self.ver[i * 2 + 1]][self.ver[i * 2]] = 'P'
+
+        if c == True:
+            mat[self.ver[1]][self.ver[0]] = 'S'
+            mat[self.ver[3]][self.ver[2]] = 'G'
+        else:
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    if mat[i][j] == self.new_map[i][j]:
+                        mat[i][j] = 0
+                        continue
+                    if mat[i][j] == 0 and self.new_map[i][j] != 0:
+                        mat[i][j] = -1
 
         return mat
 
