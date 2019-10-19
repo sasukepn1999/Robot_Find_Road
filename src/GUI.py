@@ -156,7 +156,7 @@ def fillColorOneElementOnGridByMatrix(turtle, matrix, length):
 
 # Load way by matrix (matrix contains coordinates of way)
 def findWay(turtle, way, matrix, length):
-    for i in range(1, len(way)):
+    for i in range(1, len(way) - 1):
         if (matrix[way[i][0]][way[i][1]] == 0):
             fillDotOnGrid(turtle, way[i][1], way[i][0], length)
 
