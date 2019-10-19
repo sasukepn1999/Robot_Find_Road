@@ -3,6 +3,10 @@ from find_way.base_find_path import Base_Find_Path
 import GUI_V2 as gv2
 
 class AStar_Find_Path(Base_Find_Path):
+
+
+    velocity = 3
+
     def __init__(self, file_name):
         super().__init__(file_name)
         self.direction = 0
@@ -202,14 +206,15 @@ class AStar_Find_Path(Base_Find_Path):
         self.map_mat = self.new_map
         self.new_map = tmp
 
-        if self.direction == 0:
-            self.direction = 4
-        else:
-            self.direction = 0
+        #if self.direction == 0:
+        #    self.direction = 4
+        #else:
+        #    self.direction = 0
+        self.direction = (self.direction + 2) % 8
 
-        if (len(path) > 5):
-            del path[5 : len(path) - 1]
-            self.start = path[4]
+        if (len(path) > self.velocity):
+            del path[self.velocity : len(path) - 1]
+            self.start = path[self.velocity - 1]
             return False, path
         else:
             return True, path
