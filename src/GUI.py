@@ -1,5 +1,5 @@
 import turtle as tt
-
+import time
 
 LENGTH = 30  # each grid element will be LENGTH x LENGTH pixels
 Color = ["white", "gray", "red", "orange", "yellow", "violet"]
@@ -156,7 +156,7 @@ def fillColorOneElementOnGridByMatrix(turtle, matrix, length):
 
 # Load way by matrix (matrix contains coordinates of way)
 def findWay(turtle, way, matrix, length):
-    for i in range(1, len(way) - 1):
+    for i in range(1, len(way)):
         if (matrix[way[i][0]][way[i][1]] == 0):
             fillDotOnGrid(turtle, way[i][1], way[i][0], length)
 

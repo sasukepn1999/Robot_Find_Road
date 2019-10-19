@@ -8,7 +8,6 @@ import GUI
 #import GUI_V2 as gv2
 import time
 
-
 def poly_moving(m_find_path, turtle):
     direct = 2
     while m_find_path.current_pos != m_find_path.goal:
@@ -68,18 +67,22 @@ def main():
 
             path = []
             c = True
+            d = 10
             while 1:
                 matrix = m_find_path.get_matrix(c)
                 c = False
                 check, tmp_path = m_find_path.move()
                 path = path + tmp_path
-                #print(check)
 
                 GUI.grid(turtle, len(matrix), len(matrix[0]))
                 GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
                 GUI.findWay(turtle, path, m_find_path.new_map, GUI.LENGTH)
-                #break
-                if check == True:
+
+                if check == False:
+                    d = 10
+
+                d -= 1
+                if d == 0:
                     break
 
             screen.exitonclick()
