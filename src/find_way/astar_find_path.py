@@ -4,7 +4,7 @@ from find_way.base_find_path import Base_Find_Path
 class AStar_Find_Path(Base_Find_Path):
 
 
-    velocity = 4
+    velocity = 3
 
     def __init__(self, file_name):
         super().__init__(file_name)
