@@ -123,7 +123,12 @@ def fillColorOneElementOnGridByMatrix(turtle, matrix, length):
     for i in range(m):
         for j in range(n):
             if (matrix[i][j] == 0):
-                continue
+                fillColorOneElementOnGrid(turtle,
+                                          j,
+                                          i,
+                                          "white",
+                                          length,
+                                          matrix[i][j])
             elif (matrix[i][j] == "G" or matrix[i][j] == "S"):
                 fillColorOneElementOnGrid(turtle,
                                           j,
