@@ -5,7 +5,7 @@ from find_way import dijkstra_find_path
 from find_way import astar_find_path
 import os
 import GUI
-import GUI_V2 as gv2
+#import GUI_V2 as gv2
 import time
 
 
@@ -23,7 +23,7 @@ def poly_moving(m_find_path, turtle):
 
 
 def main():
-    if (len(sys.argv) == 4 and (sys.argv[2] in ['0', '1', '2', '3']) and (sys.argv[3] in ['turtle', 'pygame'])):
+    if len(sys.argv) == 3 and sys.argv[2] in ['0', '1', '2', '3']:# and sys.argv[3] in ['turtle', 'pygame']:
         input_filepath = sys.argv[1]
 
         if not (os.path.exists(input_filepath)):
@@ -53,11 +53,10 @@ def main():
             m_find_path.update_map_mat()
             matrix = m_find_path.map_mat
 
+        if find_algo != "3":
+            print("Time to find path: ", time_end - time_start)
+
         if find_algo == "3":
-            #m_find_path = dac_find_path.Dac_Find_Path(input_filepath)
-            #m_find_path.update_map_mat()
-            #path = (0, [])
-            #matrix = m_find_path.map_mat
 
             screen = tt.Screen()
             Long = tt.Turtle()
@@ -84,34 +83,21 @@ def main():
                     break
 
             screen.exitonclick()
-
-
-        #print(time_end - time_start)
-
-        if find_algo == '3':
             return
 
-        if sys.argv[3] == "turtle":
-            path1 = path[1]
-            screen = tt.Screen()
-            Long = tt.Turtle()
-            Long.hideturtle()
-            turtle = Long
-            tt.tracer(0, 0)
+        screen = tt.Screen()
+        Long = tt.Turtle()
+        Long.hideturtle()
+        turtle = Long
+        tt.tracer(0, 0)
 
-            GUI.grid(turtle, len(matrix), len(matrix[0]))
-            GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
-            GUI.findWay(turtle, path1, matrix, GUI.LENGTH)
+        GUI.grid(turtle, len(matrix), len(matrix[0]))
+        GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
+        GUI.findWay(turtle, path[1], matrix, GUI.LENGTH)
 
-            screen.exitonclick()
-
-        if find_algo == '3':
-            poly_moving(m_find_path, turtle)
-        elif sys.argv[3] == "pygame":
-            surface = gv2.init(matrix)
-            gv2.loop(surface, matrix, path)
+        screen.exitonclick()
     else:
-        print("Usage:", sys.argv[0], 'input_filepath', 'type_algo(0-2)', 'type_gui(turtle or pygame)')
+        print("Usage:", sys.argv[0], 'input_filepath', 'type_algo(0-3)')
 
 
 if __name__ == '__main__':

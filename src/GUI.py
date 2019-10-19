@@ -1,5 +1,4 @@
 import turtle as tt
-import doan
 
 
 LENGTH = 30  # each grid element will be LENGTH x LENGTH pixels
@@ -157,32 +156,9 @@ def fillColorOneElementOnGridByMatrix(turtle, matrix, length):
 
 # Load way by matrix (matrix contains coordinates of way)
 def findWay(turtle, way, matrix, length):
-    for i in range(1, len(way) - 1):
+    for i in range(1, len(way)):
         if (matrix[way[i][0]][way[i][1]] == 0):
             fillDotOnGrid(turtle, way[i][1], way[i][0], length)
-
-
-def process(turtle):
-    fileName = input("Nhap ten file: ")
-
-    inp = doan.readData(fileName)
-
-    n = int(inp[0][0])  # column
-    m = int(inp[0][1])  # row
-    start = list([int(inp[1][1]), int(inp[1][0])])
-    goal = list([int(inp[1][3]), int(inp[1][2])])
-    numPoly = inp[2][0]
-    # numVer = inp[2][1]
-    poly = inp[3]
-    # ver = inp[4]
-
-    matrix = doan.init(m, n, start, goal, numPoly, poly)
-    path = doan.findPath(matrix, m, n, start, goal)
-
-    # return matrix, path
-    grid(turtle, len(matrix), len(matrix[0]))
-    fillColorOneElementOnGridByMatrix(turtle, matrix, LENGTH)
-    findWay(turtle, path, LENGTH)
 
 
 # ----------------------------------------------------------MAIN----------------------------------------------------------
@@ -191,7 +167,6 @@ if __name__ == '__main__':
 
     Long = tt.Turtle()
     Long.hideturtle()
-    process(Long)
 
     screen.exitonclick()
 # --------------------------------------------------------EXIT MAIN--------------------------------------------------------
