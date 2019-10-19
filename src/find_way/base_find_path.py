@@ -109,22 +109,61 @@ class Base_Find_Path(abc.ABC):
         self.cols = len(mat[0])
 
     def poly_move(self, direction):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                x = i + self.dx[direction]
-                y = j + self.dy[direction]
-                if not(self.is_valid_cell((x, y))):
-                    continue
-                if ((self.map_mat[i][j] in ['S', 'G', 'P', 1]) or
-                        (self.map_mat[x][y] in ['S', 'G', 'P', 1])):
-                    continue
-                self.map_mat[x][y] = self.map_mat[i][j]
+        self.new_map = []
+        if direction == 0 or direction == 4:
+            for i in range(self.rows):
+                x = i
+                if x != 0 and x != self.rows - 1:
+                    x -= self.dx[direction]
+                    if x == 0:
+                        x = self.rows - 2
+                    if x == self.rows - 1:
+                        x = 1
+                row = []
+                for j in range(self.cols):
+                    row.append(self.map_mat[x][j])
+                self.new_map.append(row)
+        if direction == 2 or direction == 6:
+            for i in range(self.rows):
+                row = []
+                for j in range(self.cols):
+                    y = j
+                    if y != 0 and y != self.cols - 1:
+                        y -= self.dy[direction]
+                        if y == 0:
+                            y = self.cols - 2
+                        if y == self.cols - 1:
+                            y = 1
+                    row.append(self.map_mat[i][y])
+                self.new_map.append(row)
 
     def update_map_mat(self):
         self.map_mat[self.ver[1]][self.ver[0]] = 'S'
         self.map_mat[self.ver[3]][self.ver[2]] = 'G'
         for i in range(2, len(self.ver) // 2):
             self.map_mat[self.ver[i * 2 + 1]][self.ver[i * 2]] = 'P'
+
+    def get_matrix(self, c):
+        mat = []
+        for i in range(self.rows):
+            row = []
+            for j in range(self.cols):
+                row.append(self.map_mat[i][j])
+            mat.append(row)
+
+        if c is True:
+            mat[self.ver[1]][self.ver[0]] = 'S'
+            mat[self.ver[3]][self.ver[2]] = 'G'
+        else:
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    if mat[i][j] == self.new_map[i][j]:
+                        mat[i][j] = 0
+                        continue
+                    if mat[i][j] == 0 and self.new_map[i][j] != 0:
+                        mat[i][j] = -1
+
+        return mat
 
     def next_cell(self, cell, direction):
         assert (-1 <= direction < 8), "0-7 to move or -1 to stand (not move)"

@@ -1,10 +1,14 @@
 import os
 from find_way.base_find_path import Base_Find_Path
-import GUI_V2 as gv2
+
 
 class AStar_Find_Path(Base_Find_Path):
+
+    velocity = 3
+
     def __init__(self, file_name):
         super().__init__(file_name)
+        self.direction = 0
 
     def h(self, start, goal):
         length = max(abs(start[0] - goal[0]), abs(start[1] - goal[1]))
@@ -194,6 +198,27 @@ class AStar_Find_Path(Base_Find_Path):
 
         return (res, path)
 
+    def move(self):
+        val, path = self.find_path(self.start, self.goal)
+        self.poly_move(self.direction)
+        tmp = self.map_mat
+        self.map_mat = self.new_map
+        self.new_map = tmp
+
+        # if self.direction == 0:
+        #    self.direction = 4
+        # else:
+        #    self.direction = 0
+        self.direction = (self.direction + 2) % 8
+
+        if (len(path) > self.velocity + 1):
+            del path[self.velocity + 1: len(path)]
+            self.start = path[self.velocity]
+            return False, path
+        else:
+            return True, path
+
+
 # main
 if __name__ == '__main__':
     file_name = input("File name: ")
@@ -202,8 +227,4 @@ if __name__ == '__main__':
         exit(0)
     m_find_path = AStar_Find_Path(file_name)
     path = m_find_path.get_path()
-    print(path[1])
-    m_find_path.update_map_mat()
-    matrix = m_find_path.map_mat
-    surface = gv2.init(matrix)
-    gv2.loop(surface, matrix, path)
+    print(path)
