@@ -5,6 +5,7 @@ import GUI_V2 as gv2
 class AStar_Find_Path(Base_Find_Path):
     def __init__(self, file_name):
         super().__init__(file_name)
+        self.direction = 0
 
     def h(self, start, goal):
         length = max(abs(start[0] - goal[0]), abs(start[1] - goal[1]))
@@ -193,6 +194,25 @@ class AStar_Find_Path(Base_Find_Path):
             path = path + move
 
         return (res, path)
+
+    def move(self):
+        val, path = self.find_path(self.start, self.goal)
+        self.poly_move(self.direction)
+        tmp = self.map_mat
+        self.map_mat = self.new_map
+        self.new_map = tmp
+
+        if self.direction == 0:
+            self.direction = 4
+        else:
+            self.direction = 0
+
+        if (len(path) > 5):
+            del path[5 : len(path) - 1]
+            self.start = path[4]
+            return False, path
+        else:
+            return True, path
 
 # main
 if __name__ == '__main__':
