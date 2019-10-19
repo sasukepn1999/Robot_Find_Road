@@ -52,6 +52,7 @@ def main():
             path = (0, [])
             matrix = m_find_path.map_mat
 
+        # print(matrix)
         if sys.argv[3] == "turtle":
             path1 = path[1]
             screen = tt.Screen()

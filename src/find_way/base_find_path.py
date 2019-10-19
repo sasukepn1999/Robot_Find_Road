@@ -161,7 +161,7 @@ class Base_Find_Path(abc.ABC):
             if ((self.is_valid_cell((x1, y1))) and
                 (self.is_valid_cell((x2, y2))) and
                 (self.map_mat[x1][y1] != 0) and
-                    (self.map_mat[x1][y1] == self.map_mat[x2][y2])):
+                    (self.map_mat[x2][y2] != 0)):
                 return self.map_mat[x1][y1]
         return 0
 
