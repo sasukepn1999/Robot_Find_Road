@@ -68,15 +68,17 @@ def main():
             m_find_path = astar_find_path.AStar_Find_Path(input_filepath)
 
             path = []
+            c = True
             while 1:
-                matrix = m_find_path.get_matrix()
+                matrix = m_find_path.get_matrix(c)
+                c = False
                 check, tmp_path = m_find_path.move()
                 path = path + tmp_path
                 #print(check)
 
                 GUI.grid(turtle, len(matrix), len(matrix[0]))
                 GUI.fillColorOneElementOnGridByMatrix(turtle, matrix, GUI.LENGTH)
-                GUI.findWay(turtle, path, matrix, GUI.LENGTH)
+                GUI.findWay(turtle, path, m_find_path.new_map, GUI.LENGTH)
                 #break
                 if check == True:
                     break
