@@ -1,6 +1,5 @@
 import os
 from find_way.base_find_path import Base_Find_Path
-import GUI_V2 as gv2
 
 class Dijkstra_Find_Path(Base_Find_Path):
     def __init__(self, file_name):
@@ -184,8 +183,5 @@ if __name__ == '__main__':
         exit(0)
     m_find_path = Dijkstra_Find_Path(file_name)
     path = m_find_path.get_path()
-    m_find_path.update_map_mat()
-    matrix = m_find_path.map_mat
-    surface = gv2.init(matrix)
-    gv2.loop(surface, matrix, path)
+    print(path)
 
